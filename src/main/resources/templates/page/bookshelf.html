@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8"/>
+    <title>用户书架管理页面</title>
+    <meta name="renderer" content="webkit"/>
+    <link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon"/>
+    <link rel="stylesheet" th:href="@{/css/font.css}"/>
+    <link rel="stylesheet" th:href="@{/css/xadmin.css}"/>
+    <script th:src="@{/js/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/lib/layui/layui.js}" charset="utf-8"></script>
+    <script type="text/javascript" th:src="@{/js/xadmin.js}"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+</head>
+
+<body>
+<div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="">个人中心</a>
+        <a><cite>书架</cite></a>
+      </span>
+    <a class="layui-btn layui-btn-primary layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
+       href="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:38px">ဂ</i></a>
+</div>
+<div class="x-body">
+    <xblock>
+        <button class="layui-btn layui-btn-danger" onclick="delAll()"><i class="layui-icon"></i>批量删除</button>
+        <span class="x-right" style="line-height:40px">共有数据：<i th:text="${bookshelf.size()}"></i> 条</span>
+    </xblock>
+    <table class="layui-table">
+        <thead>
+        <tr>
+            <th>
+                <div class="layui-unselect header layui-form-checkbox" lay-skin="primary"><i
+                        class="layui-icon">&#xe605;</i></div>
+            </th>
+            <th>序号</th>
+            <th>书名</th>
+            <th>作者</th>
+            <th>阅读章节</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="book,bookStat : ${bookshelf}">
+            <td>
+                <div class="layui-unselect layui-form-checkbox" lay-skin="primary" th:attr="data-id=${book.id}">
+                    <i class="layui-icon">&#xe605;</i>
+                </div>
+            </td>
+            <td th:text="${bookStat.index+1}">1</td>
+            <td><a href="javascript:;" th:onclick="'bookFind(\''+${book.tSn}+'\');'"
+                   th:text="${'《'+book.bookName+'》'}"></a></td>
+            <td><a href="javascript:;" th:onclick="'authorFind(\''+${book.author}+'\');'" th:text="${book.author}"></a>
+            </td>
+            <td><a href="javascript:;" th:onclick="'chapterFind(\''+${book.tSn}+'\',\''+${book.chapternum}+'\');'"
+                   th:text="${book.chapter}"></a></td>
+            <td class="td-manage">
+                <a title="删除" th:onclick="'javascript:member_del(this,'+${book.id}+')'" href="javascript:;"><i
+                        class="layui-icon">&#xe640;</i></a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <!--<div class="page">-->
+        <!--<div>-->
+            <!--<a class="prev" href="">&lt;&lt;</a>-->
+            <!--<a class="num" href="">1</a>-->
+            <!--<span class="current">2</span>-->
+            <!--<a class="num" href="">3</a>-->
+            <!--<a class="num" href="">489</a>-->
+            <!--<a class="next" href="">&gt;&gt;</a>-->
+        <!--</div>-->
+    <!--</div>-->
+
+</div>
+<script>
+    // layui.use('laydate', function () {
+    //     var laydate = layui.laydate;
+    //
+    //     //执行一个laydate实例
+    //     laydate.render({
+    //         elem: '#start' //指定元素
+    //     });
+    //
+    //     //执行一个laydate实例
+    //     laydate.render({
+    //         elem: '#end' //指定元素
+    //     });
+    // });
+
+    function bookFind(tSn) {
+        window.parent.location.href = '/toCatalogue2.html/' + tSn;
+    }
+
+    function authorFind(author) {
+        window.parent.location.href = '/ebook/findBookByName?keyword=' + author;
+    }
+
+    function chapterFind(tSn, chapternum) {
+        window.parent.location.href = '/readBookPage/' + tSn + '/' + chapternum;
+    }
+
+    // /*用户-停用*/
+    // function member_stop(obj, id) {
+    //     layer.confirm('确认要停用吗？', function (index) {
+    //
+    //         if ($(obj).attr('title') == '启用') {
+    //
+    //             //发异步把用户状态进行更改
+    //             $(obj).attr('title', '停用')
+    //             $(obj).find('i').html('&#xe62f;');
+    //
+    //             $(obj).parents("tr").find(".td-status").find('span').addClass('layui-btn-disabled').html('已停用');
+    //             layer.msg('已停用!', {icon: 5, time: 1000});
+    //
+    //         } else {
+    //             $(obj).attr('title', '启用')
+    //             $(obj).find('i').html('&#xe601;');
+    //
+    //             $(obj).parents("tr").find(".td-status").find('span').removeClass('layui-btn-disabled').html('已启用');
+    //             layer.msg('已启用!', {icon: 5, time: 1000});
+    //         }
+    //
+    //     });
+    // }
+
+    /*书架信息-删除*/
+    function member_del(obj, id) {
+        layer.confirm('确认要删除吗？', function (index) {
+            //发异步删除数据
+            $.ajax({
+                url: "/readerUser/deleteShelf",
+                data: {'id': id},
+                type: "Post",
+                dataType: "json",
+                success: function (data) {
+                    layer.close(index);
+                    if (data == "success") {
+                        $(obj).parents("tr").remove();
+                        layer.msg('已删除!', {icon: 1, time: 1000});
+                    } else {
+                        layer.msg('删除失败!', {icon: 1, time: 1000});
+                    }
+
+                },
+                error: function (data) {
+                    layer.msg("删除数据出现错误！！！");
+                }
+            });
+        });
+    }
+
+    function delAll(argument) {
+
+        var data = tableCheck.getData();
+
+        if(data.length==0){
+            layer.msg('未选择书籍！', {icon: 1});
+        }else{
+            layer.confirm('确认要删除选中书籍吗？', function (index) {
+                //捉到所有被选中的，发异步进行删除
+                $.ajax({
+                    url: "/readerUser/deleteAllShelf",
+                    data: {'ids': data},
+                    traditional:true,
+                    type: "Post",
+                    dataType: "json",
+                    success: function (data) {
+                        layer.close(index);
+                        if(data=="success") {
+                            layer.msg('删除成功', {icon: 1});
+                            $(".layui-form-checked").not('.header').parents('tr').remove();
+                        }else{
+                            layer.msg('删除失败！', {icon: 1});
+                        }
+                    },
+                    error: function (data) {
+                        layer.close(index);
+                        layer.msg("删除数据出现错误！！！");
+                    }
+                });
+            });
+        }
+    }
+</script>
+</body>
+<!--<script th:src="@{/js/fuqiang.js}" charset="utf-8"></script>-->
+</html>

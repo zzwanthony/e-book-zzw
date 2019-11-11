@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8"/>
+    <title>用户管理页面</title>
+    <meta name="renderer" content="webkit"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon"/>
+    <link rel="stylesheet" th:href="@{/css/font.css}"/>
+    <link rel="stylesheet" th:href="@{/css/xadmin.css}"/>
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/lib/layui/layui.js}" charset="utf-8"></script>
+    <script type="text/javascript" th:src="@{/js/xadmin.js}"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+</head>
+
+<body>
+<div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="">管理员管理</a>
+        <a>
+          <cite>所有用户管理</cite></a>
+      </span>
+    <a class="layui-btn layui-btn-primary layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
+       href="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:38px">ဂ</i></a>
+</div>
+<div class="x-body">
+    <div class="layui-row">
+        <form class="layui-form layui-col-md12 x-so" th:action="@{/administrator/userSearch}" method="post">
+            <input class="layui-input" placeholder="用户名" name="uname" th:value="${unameSearch}" id="uname"/>
+            <input class="layui-input" placeholder="手机号" name="phone" th:value="${phoneSearch}" id="phone"/>
+            <button class="layui-btn" lay-submit="" lay-filter="sreach"><i class="layui-icon">&#xe615;</i></button>
+        </form>
+    </div>
+    <xblock style="height: 38px">
+        <!--<button class="layui-btn layui-btn-danger" onclick="delAll()"><i class="layui-icon"></i>批量删除</button>-->
+        <span class="x-right" style="line-height:40px">共有数据：<i th:text="${userList.size()}"></i> 条</span>
+    </xblock>
+    <table class="layui-table">
+        <thead>
+        <tr>
+            <th>序号</th>
+            <th>用户名</th>
+            <th>手机</th>
+            <th>性别</th>
+            <th>生日</th>
+            <th>用户类型</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="user,userStat : ${userList}">
+            <td th:text="${userStat.index+1}"></td>
+            <td th:text="${user.uname}"></td>
+            <td th:text="${user.phone}"></td>
+            <td th:text="${user.sex}"></td>
+            <td th:text="${user.birth}"></td>
+            <td th:text="${user.userType==1? '电子书管理员':'阅读用户'}"></td>
+            <td class="td-manage">
+                <a title="删除" th:onclick="'javascript:member_del(this,'+${user.uid}+','+${user.userType}+')'"
+                   href="javascript:;">
+                    <i class="layui-icon">&#xe640;</i>
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+<script>
+    /*用户-删除*/
+    function member_del(obj, id, userType) {
+        layer.confirm('确认要删除吗？', function (index) {
+            //发异步删除数据
+            if (userType == 1) {
+                layer.close(index);
+                layer.msg('不可删除管理员用户!', {icon: 1, time: 2000});
+            } else {
+                $.ajax({
+                    url: "/administrator/deleteUser",
+                    data: {'uid': id},
+                    type: "Post",
+                    dataType: "json",
+                    success: function (data) {
+                        layer.close(index);
+                        if (data == "presentUser") {
+                            layer.msg('不可删除当前登录用户!', {icon: 1, time: 1000});
+                        } else if (data == "success") {
+                            $(obj).parents("tr").remove();
+                            layer.msg('已删除!', {icon: 1, time: 1000});
+                        } else {
+                            layer.msg('删除失败!', {icon: 1, time: 1000});
+                        }
+
+                    },
+                    error: function (data) {
+                        layer.msg("删除数据出现错误！！！");
+                    }
+                });
+            }
+
+        });
+    }
+</script>
+</body>
+
+<script th:src="@{/js/fuqiang.js}" charset="utf-8"></script>
+</html>

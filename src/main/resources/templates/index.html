@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>电子书阅读首页</title>
+    <!-- 新 Bootstrap4 核心 CSS 文件 -->
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
+    <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+    <script th:src="@{/js/jquery.min.js}"></script>
+    <!-- 最新的 Bootstrap4 核心 JavaScript 文件 -->
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <link th:href="@{/css/style.css}" rel="stylesheet" type="text/css"/>
+    <script type="text/javascript" th:src="@{/js/jquery.js}"></script>
+    <script th:src="@{/js/msc_common.js}" type="text/javascript" language="javascript"></script>
+</head>
+<body style="background: #eff6fc">
+<div class="head" style="height: 50px">
+    <div class="padding">
+        <div class="header">
+            <ul class="menu">
+                <div class="logo">电子书城</div>
+                <li class="on"><a th:href="@{/}" title="首页">首页</a></li>
+
+                <li><a th:href="@{'/ebook/sortBook/小说'}"><span>小说</span></a></li>
+                <li><a th:href="@{'/ebook/sortBook/计算机'}"><span>计算机</span></a></li>
+                <li><a th:href="@{'/ebook/sortBook/名著'}"><span>名著</span></a></li>
+                <li><a th:href="@{'/ebook/sortBook/儿童'}"><span>儿童</span></a></li>
+                <li><a th:href="@{'/ebook/sortBook/生活休闲'}"><span>生活休闲</span></a></li>
+                <li><a th:href="@{'/ebook/sortBook/自然科学'}"><span>自然科学</span></a></li>
+                <li><a th:href="@{'/ebook/sortBook/哲学'}"><span>哲学</span></a></li>
+                <li><a th:href="@{'/ebook/sortBook/游戏'}"><span>游戏</span></a></li>
+                <li><a th:href="@{'/ebook/sortBook/其他'}"><span>其他</span></a></li>
+
+            </ul>
+            <div class="search" style="height: 36px">
+                <form name="formsearch" method="post" th:action="@{/ebook/findBookByName}">
+                    <input type="hidden" name="key" value="0"/>
+                    <input name="keyword" type="text" class="search-keyword" id="search-keyword" value="输入搜索..."
+                           onfocus="if(this.value=='输入搜索...'){this.value='';}"
+                           onblur="if(this.value==''){this.value='输入搜索...';}"/>
+                    <button type="submit" class="search-submit">搜索</button>
+                </form>
+            </div>
+            <ul class="nav">
+                <li th:if="${session.user == null}">
+                    <span style="cursor: hand">
+                        <a style="font-size:15px;color:white"
+                           th:href="@{/loginPage/login.html}">登入&nbsp;&nbsp;&nbsp;</a>
+                    </span>
+                </li>
+                <li th:if="${session.user != null}">
+                    <span style="cursor: hand">
+                        <a style="font-size:15px;color:white" th:href="@{/readerUser/personal.do}">
+                            个人中心
+                        </a>
+                    </span>
+                </li>
+                <li th:if="${session.user != null}">
+                    <span style="cursor: hand">
+                        <a style="font-size:15px;color:white" th:href="@{/outLogin.do}">
+                            退出登录
+                        </a>
+                    </span>
+                </li>
+                <!--<li>-->
+                <!--<span style="CURSOR: hand"-->
+                <!--onClick="javascript:window.external.AddFavorite('http://www.zzwanthony.xyz/dianzishuyuedu','电子书阅读网')"-->
+                <!--title="http://www.zzwanthony.xyz/dianzishuyuedu"><font-->
+                <!--style="color:#ffffff;">收藏本站</font></span>-->
+                <!--</li>-->
+            </ul>
+        </div>
+    </div>
+</div>
+<div id="demo" class="carousel slide" data-ride="carousel">
+    <!-- 指示符 -->
+    <ul class="carousel-indicators">
+        <li data-target="#demo" th:each="book,bookStat:${newestBooks}" th:if="${bookStat.index} lt 3"
+            th:attr="data-slide-to=${bookStat.index}" th:class="${bookStat.index==0} ? 'active'"></li>
+    </ul>
+
+    <!-- 轮播图片 -->
+    <div class="carousel-inner">
+        <div th:each="book,bookStat:${newestBooks}" th:if="${bookStat.index} lt 3" th:class="${bookStat.index==0} ? 'carousel-item active':'carousel-item'">
+            <a th:href="@{'/toCatalogue.html/'+${book.eid}}" style="cursor:pointer;">
+                <img th:src="${(book.coverName == null || book.coverName == '') ? '/book/images/default.jpg' : '/book/images/'+book.coverName}"
+                     th:attr="alt=${book.ename}" width="100%;" style="height: 400px"/>
+            </a>
+        </div>
+    </div>
+    <!-- 左右切换按钮 -->
+    <a class="carousel-control-prev" href="#demo" data-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+    </a>
+    <a class="carousel-control-next" href="#demo" data-slide="next">
+        <span class="carousel-control-next-icon"></span>
+    </a>
+</div>
+<div class="padding">
+
+    <div class="box">
+        <div class="title">
+            <h5 class="current" data-box="cols-1">最新推荐</h5>
+        </div>
+
+        <div class="books section-cols" id="cols-1"><!--18-->
+
+            <div class='bk' th:each="lists,listsStat:${newestBooks}" th:if="${listsStat.index} ge 3">
+                <div class='pic'>
+                    <a th:href="@{'/toCatalogue.html/'+${lists.eid}}" style="cursor:pointer;">
+                        <img th:src="${(lists.coverName == null || lists.coverName == '') ? '/book/images/default.jpg' : '/book/images/'+lists.coverName}"
+                             th:attr="alt=${lists.ename}"/>
+                    </a>
+                </div>
+                <h3><!-- 跳转到该书本的目录页面 -->
+                    《<a th:text="${lists.ename}" th:href="@{'/toCatalogue.html/'+${lists.eid}}">书名</a>》
+                </h3>
+                <span th:text="'上传日期：['+${lists.uploadData}+']'"></span>
+                <div class='bnew'>
+                    作者：<a th:text="${lists.author}" style="cursor:pointer;"
+                          th:href="@{/ebook/findBookByName(keyword=${lists.author})}">空</a>
+                </div>
+                <p th:text="'简介:'+${lists.introduction}">简介暂无！</p>
+            </div>
+
+        </div>
+
+    </div>
+    <div class="links">
+        <h3>读书有益</h3>
+        <ul>
+            <li>你热爱生命吗？那么别浪费时间，因为时间是组成生命的材料。——富兰克林</li>
+            <li>旧书不厌百回读，熟读精思子自知。——苏轼</li>
+            <li>经验丰富的人读书用两只眼睛，一只眼睛看到纸面上的话，另一眼睛看到纸的背面。——歌德</li>
+        </ul>
+    </div>
+</div>
+﻿
+<div class="foot">
+    <p>Copyright ©2019 zhongzhiwei</p>
+    <p>江西科技师范软件动漫学院 16计算机一班 毕业设计 钟志卫</p>
+</div>
+</body>
+<script th:src="@{/js/fuqiang.js}" charset="utf-8"></script>
+</html>

@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8"/>
+    <title>用户信息修改页面</title>
+    <meta name="renderer" content="webkit"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon"/>
+    <link rel="stylesheet" th:href="@{/css/font.css}"/>
+    <link rel="stylesheet" th:href="@{/css/xadmin.css}"/>
+    <script th:src="@{/js/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/lib/layui/layui.js}" charset="utf-8"></script>
+    <script type="text/javascript" th:src="@{/js/xadmin.js}"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+</head>
+
+<body>
+<div class="x-body">
+    <form class="layui-form" method="post" th:action="@{/readerUser/modifyUser}">
+        <input type="hidden" th:value="${session.user.uid}" name="uid"/>
+        <div class="layui-form-item">
+            <label for="uname" class="layui-form-label">
+                <span class="x-red">*</span>用户名
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="uname" name="uname" required="required" lay-verify="uname"
+                       autocomplete="off" th:value="${session.user.uname}" class="layui-input"/>
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                <span class="x-red">*</span>将会成为您登录后的名称
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="phone" class="layui-form-label">
+                <span class="x-red">*</span>手机
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" th:value="${session.user.phone}" id="phone" name="phone" lay-verify="phone"
+                       required="required" autocomplete="off" class="layui-input" readonly="readonly"/>
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                <span class="x-red">*</span>登入账号不可修改
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">
+                <span class="x-red">*</span>性别
+            </label>
+            <div class="layui-input-inline">
+                <input type="radio" value="男" name="sex" th:attr="checked=${session.user.sex == '男'?true:false}"/>男
+                <input type="radio" value="女" name="sex" th:attr="checked=${session.user.sex == '女'?true:false}"/>女
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                <span class="x-red">*</span>
+            </div>
+        </div>
+        <!-- 出生日期 -->
+        <div class="layui-form-item">
+            <label for="birth" class="layui-form-label">
+                <span class="x-red">*</span>出生日期
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" th:value="${session.user.birth}" id="birth" name="birth" lay-verify="birth"
+                       autocomplete="off" class="layui-input" readonly="readonly"/>
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                <span class="x-red">*</span>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">
+            </label>
+            <button class="layui-btn" lay-filter="modify" lay-submit="">
+                修改
+            </button>
+        </div>
+    </form>
+</div>
+<script type="text/javascript" th:src="@{/js/mobiscroll.custom.min.js}"></script>
+<link th:href="@{/css/mobiscroll.custom.min.css}" rel="stylesheet" type="text/css"/>
+<script type="text/javascript">
+
+    layui.use(['form', 'layer'], function () {
+        $ = layui.jquery;
+        var form = layui.form
+            , layer = layui.layer;
+
+        //自定义验证规则
+        /*<![CDATA[*/
+        form.verify({
+            uname: function (value) {
+                if (value.length < 3) {
+                    return 'ID不能少于三个字符';
+                }
+            }
+        });
+        /*]]>*/
+
+        //监听提交
+        form.on('submit(modify)', function (data) {
+            $.ajax({
+                url: data.form.action,
+                type: data.form.method,
+                data: $(data.form).serialize(),
+                success: function (info) {
+                    if (info == "success") {
+                        layer.msg("修改成功！");
+                    } else {
+                        layer.msg("修改失败！");
+                    }
+                }
+            });
+            return false;
+        });
+    });
+
+    var theme = "ios";
+    var mode = "scroller";
+    var display = "bottom";
+    var lang = "zh";
+
+    // Date demo initialization
+    $('#birth').mobiscroll().date({
+        theme: theme,
+        mode: mode,
+        display: display,
+        lang: lang,
+        dateFormat: "yyyy-mm-dd"
+    });
+</script>
+</body>
+<script th:src="@{/js/fuqiang.js}" charset="utf-8"></script>
+</html>

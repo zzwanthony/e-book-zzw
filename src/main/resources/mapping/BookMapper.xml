@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zzw.dao.BookMapper">
+
+    <!--保存书籍-->
+    <insert id="saveBook" parameterType="com.zzw.entity.Ebook">
+        INSERT INTO `ebook` VALUES(NULL,#{ename},#{author},#{translator},#{txtName},#{coverName},NULL,NULL,NULL,#{uploadData},#{introduction},#{title},#{chapter},#{nioOffset},#{offset},#{uid},#{sid},#{txtSn});
+    </insert>
+
+    <!-- 分页查询，返回定单信息 -->
+    <select id="indexBook" resultType="com.zzw.entity.Ebook">
+        SELECT * FROM `ebook` ORDER BY `eid` DESC limit 10;
+    </select>
+
+    <delete id="deleteBook" parameterType="int">
+        delete from `ebook` where `eid`=#{0};
+    </delete>
+    <select id="getAllBook" resultType="com.zzw.entity.Ebook">
+        SELECT e.eid,e.ename,e.author,e.uploadData,u.uname FROM `ebook` e,`user` u WHERE e.uid=u.uid;
+    </select>
+    <select id="getAllSort" resultType="com.zzw.entity.Sort">
+        SELECT * FROM `sort`
+    </select>
+    <select id="getBookByID" resultType="com.zzw.entity.Ebook">
+        select * from `ebook` where `eid` = #{0}
+    </select>
+    <select id="getBookByTxtsn" resultType="com.zzw.entity.Ebook" parameterType="string">
+        select * from `ebook` where `txtSn` = #{0}
+    </select>
+    <select id="findBook" resultType="com.zzw.entity.Ebook" parameterType="string">
+        SELECT * FROM `ebook` WHERE `ename` LIKE CONCAT('%',#{0},'%') OR `author` LIKE CONCAT('%',#{0},'%');
+    </select>
+    <select id="findBookBySort" parameterType="int" resultType="com.zzw.entity.Ebook">
+        SELECT * FROM `ebook` WHERE `sid` = #{0};
+    </select>
+    <select id="findSort" resultType="com.zzw.entity.Sort">
+        SELECT * FROM `sort` WHERE `name` = #{0};
+    </select>
+    <select id="bookSearch" resultType="com.zzw.entity.Ebook">
+        select * from `ebook` where `ename` LIKE CONCAT('%',#{bookName},'%')
+        <if test="start != '' and start != null">
+            AND `uploadData` &gt; #{start }
+        </if>
+        <if test="end != '' and end != null">
+            AND `uploadData` &lt; #{end }
+        </if>
+    </select>
+    <delete id="deleteBooks">
+        delete from `ebook`
+        where `eid` in
+        <foreach collection="allID" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <select id="findBookFileName" resultType="com.zzw.entity.Ebook">
+        select `txtName`,`coverName` from `ebook`
+        where `eid` in
+        <foreach collection="allID" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+</mapper>

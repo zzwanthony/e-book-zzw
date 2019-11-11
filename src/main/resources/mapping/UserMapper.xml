@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zzw.dao.UserMapper">
+    <!-- 登入验证 -->
+    <select id="userLogin" resultType="com.zzw.entity.User">
+      SELECT * FROM `user` WHERE `phone`=#{username} AND password=#{password};
+    </select>
+    <!-- 添加用户 -->
+    <insert id="userAdd" parameterType="com.zzw.entity.User">
+        INSERT INTO `user` VALUE(NULL,#{uname},#{phone},#{password},#{sex},#{birth},#{userType},NULL,NULL,NULL);
+    </insert>
+    <select id="phoneExit" resultType="string" parameterType="string">
+        SELECT `phone` from `user` where `phone`=#{0};
+    </select>
+    <select id="getBookshelf" resultType="com.zzw.entity.Bookshelf">
+        SELECT bs.*,e.author,e.ename bookname FROM bookshelf bs, ebook e WHERE bs.tSn = e.txtSn AND bs.uid=#{0};
+    </select>
+    <select id="getAllUser" resultType="com.zzw.entity.User">
+        SELECT * FROM `user`;
+    </select>
+    <update id="modifyUser" parameterType="com.zzw.entity.User">
+        UPDATE `user` SET `uname` = #{uname},`sex` = #{sex},`birth` = #{birth} WHERE `uid`= #{uid };
+    </update>
+    <update id="modifyPassword">
+        UPDATE `user` SET `password`=#{password} WHERE `uid`=#{uid};
+    </update>
+    <delete id="deleteUser" parameterType="int">
+        DELETE FROM `user` WHERE `uid`=#{0};
+    </delete>
+    <select id="userSearch" resultType="com.zzw.entity.User">
+        SELECT * FROM `user` WHERE `uname` LIKE CONCAT('%',#{uname},'%') AND `phone` LIKE CONCAT('%',#{phone},'%');
+    </select>
+    <select id="isExistShelf" resultType="com.zzw.entity.Bookshelf">
+        select * from `bookshelf` where `uid`=#{uid} and `tSn`=#{txtSn};
+    </select>
+    <insert id="collectBook" parameterType="com.zzw.entity.Bookshelf">
+        INSERT INTO `bookshelf` VALUE(NULL,#{tSn},#{uid},#{chapternum},#{chapter});
+    </insert>
+    <update id="updateBookshelf" parameterType="com.zzw.entity.Bookshelf">
+        update `bookshelf` set `chapternum`=#{chapternum},`chapter`=#{chapter} where `id`=#{id};
+    </update>
+    <delete id="deleteShelf">
+        delete from `bookshelf` where `id`=#{0};
+    </delete>
+    <delete id="deleteAllShelf">
+        delete from `bookshelf` where `id` in
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <select id="getAdminFace" resultType="com.zzw.entity.User">
+        SELECT * FROM `user` WHERE `userType`=1 AND `faceInfo` is not NULL AND `faceInfo` != '';
+    </select>
+    <update id="faceRegister">
+        UPDATE `user` SET `faceInfo`=#{faceInfo} WHERE `uid`=#{uid};
+    </update>
+</mapper>

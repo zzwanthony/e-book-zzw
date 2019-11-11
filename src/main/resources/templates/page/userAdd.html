@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8"/>
+    <title>用户添加页面</title>
+    <meta name="renderer" content="webkit"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon"/>
+    <link rel="stylesheet" th:href="@{/css/font.css}"/>
+    <link rel="stylesheet" th:href="@{/css/xadmin.css}"/>
+    <script th:src="@{/js/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/lib/layui/layui.js}" charset="utf-8"></script>
+    <script type="text/javascript" th:src="@{/js/xadmin.js}"></script>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+</head>
+
+<body>
+<div class="x-body">
+    <form class="layui-form" method="post" th:action="@{/administrator/userAdd}">
+        <div class="layui-form-item">
+            <label for="uname" class="layui-form-label">
+                <span class="x-red">*</span>登录名
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="uname" name="uname" lay-verify="uname"
+                       required="required" autocomplete="off" class="layui-input"/>
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                <span class="x-red">*</span>用户的ID
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="phone" class="layui-form-label">
+                <span class="x-red">*</span>手机
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="phone" name="phone" lay-verify="phone"
+                       required="required" autocomplete="off" class="layui-input"/>
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                <span class="x-red">*</span>登入账号不可修改
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">
+                <span class="x-red">*</span>性别
+            </label>
+            <div class="layui-input-inline">
+                <input type="radio" value="男" name="sex" checked="checked"/>男
+                <input type="radio" value="女" name="sex"/>女
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                <span class="x-red">*</span>
+            </div>
+        </div>
+        <!-- 出生日期 -->
+        <div class="layui-form-item">
+            <label for="birth" class="layui-form-label">
+                <span class="x-red">*</span>出生日期
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="birth" name="birth" lay-verify="birth" autocomplete="off" class="layui-input"
+                       required="required" readonly="readonly"/>
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                <span class="x-red"></span>
+            </div>
+        </div>
+        <!-- 用户类型 -->
+        <div class="layui-form-item">
+            <label class="layui-form-label">
+                <span class="x-red">*</span>用户类型
+            </label>
+            <div class="layui-input-inline" style="width: 300px">
+                <input type="radio" value="0" name="userType" checked="checked"/>普通用户
+                <input type="radio" value="1" name="userType"/>电子书管理员
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                <span class="x-red"></span>
+            </div>
+        </div>
+        <!-- 登入密码 -->
+        <div class="layui-form-item">
+            <label for="L_pass" class="layui-form-label">
+                <span class="x-red">*</span>密码
+            </label>
+            <div class="layui-input-inline">
+                <input type="password" id="L_pass" name="password" lay-verify="password" required="required"
+                       autocomplete="off" class="layui-input"/>
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                6到16个字符
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="L_repass" class="layui-form-label">
+                <span class="x-red">*</span>确认密码
+            </label>
+            <div class="layui-input-inline">
+                <input type="password" id="L_repass" name="repass" lay-verify="repass" required="required"
+                       autocomplete="off"
+                       class="layui-input"/>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="L_repass" class="layui-form-label">
+            </label>
+            <button class="layui-btn" lay-filter="add" lay-submit="">
+                增加
+            </button>
+        </div>
+    </form>
+</div>
+</body>
+<script type="text/javascript" th:src="@{/js/mobiscroll.custom.min.js}"></script>
+<link th:href="@{/css/mobiscroll.custom.min.css}" rel="stylesheet" type="text/css"/>
+<script>
+    var theme = "ios";
+    var mode = "scroller";
+    var display = "bottom";
+    var lang = "zh";
+    var phoneTT = /[1][3-9][0-9]{9,9}/;
+
+    // Date demo initialization
+    $('#birth').mobiscroll().date({
+        theme: theme,
+        mode: mode,
+        display: display,
+        lang: lang,
+        dateFormat: "yyyy-mm-dd"
+    });
+    layui.use(['form', 'layer'], function () {
+        $ = layui.jquery;
+        var form = layui.form
+            , layer = layui.layer;
+
+        //自定义验证规则
+        /*<![CDATA[*/
+        form.verify({
+            uname: function (value) {
+                if (value.length < 3) {
+                    return '昵称至少得3个字符啊';
+                }
+            }
+            , password: [/(.+){6,12}$/, '密码必须6到12位']
+            , repass: function (value) {
+                if ($('#L_pass').val() != $('#L_repass').val()) {
+                    return '两次密码不一致';
+                }
+            }, phone: function (value) {
+                if(!phoneTT.exec(value)){
+                    return "手机格式不正确";
+                }
+            }, birth: function (value) {
+                if ($('#birth').val() == "") {
+                    return "出生日期不能为空";
+                }
+            }
+        });
+        /*]]>*/
+
+        //监听提交
+        form.on('submit(add)', function (data) {
+            $.ajax({
+                url: data.form.action,
+                type: data.form.method,
+                data: $(data.form).serialize(),
+                success: function (info) {
+                    if (info == "exist") {
+                        layer.msg("手机号已经注册，不可添加！");
+                    } else if (info == "success") {
+                        layer.msg("用户添加成功！");
+                    } else {
+                        layer.msg("添加失败！");
+                    }
+                }
+            });
+            return false;
+        });
+    });
+</script>
+
+<script th:src="@{/js/fuqiang.js}" charset="utf-8"></script>
+</html>

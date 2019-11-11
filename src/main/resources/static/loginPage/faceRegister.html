@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style type="text/css">
+        * {
+            margin: 0;
+            padding: 0
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+        }
+
+        body {
+            background: url(./images/dddd.jpg) no-repeat center;
+        }
+
+        h1 {
+            color: #fff;
+            text-align: center;
+            line-height: 80px;
+        }
+
+        .media {
+            width: 534px;
+            height: 400px;
+            margin: 40px auto 0;
+            /*transform-style: preserve-3d;*/
+            /*transform: perspective(600px) rotateY(25deg);*/
+            border-radius: 50%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #login {
+            width: 200px;
+            height: 50px;
+            background: #0089ff;
+            margin: 60px auto 0;
+            font-size: 30px;
+            text-align: center;
+            line-height: 50px;
+            color: #fff;
+            border-radius: 30px;
+            /*transform-style: preserve-3d;*/
+            /*transform: perspective(600px) rotateY(25deg) rotateZ(-10deg);*/
+            cursor: pointer;
+        }
+        #login:hover{
+            background: rgba(0, 87, 166, 0.5);
+        }
+        #login:active{
+            background: rgba(0, 137, 255, 0.42);
+        }
+        #canvas {
+            display: none;
+        }
+
+        #scan {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: url(./images/scan.png);
+            background-size: cover;
+        }
+    </style>
+</head>
+<body>
+<h1>管理员人脸登录页面</h1>
+<div class="media">
+    <video id="video" width="550" height="400" autoplay="autoplay"></video>
+    <canvas id="canvas" width="550" height="400">请使用谷歌浏览器</canvas>
+    <div id="scan"></div>
+</div>
+<div id="login">上传</div>
+<script type="text/javascript" src="../js/jquery.min.js"></script>
+<script type="text/javascript">
+    var video = document.getElementById("video");
+    var btn = document.getElementById("login");
+    var context = canvas.getContext("2d");
+    //调用摄像头，获取媒体视频流
+    var getUserMedia = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia);
+    //getUserMedia.call(要调用的对象，约束对象，调用成功执行的方法，调用失败执行的方法)
+    getUserMedia.call(navigator, {video: true, audio: false}, function (localMediaStream) {
+        // document.getElementById('video').src=window.URL.createObjectURL(localMediaStream);
+        // video.onloadedmedata = function(){video.play();}
+        try {
+            video.src = window.URL.createObjectURL(localMediaStream);
+        } catch (e) {
+            console.log("获取摄像头失败！", e);
+            video.srcObject = localMediaStream;
+        }
+    }, function (e) {
+        console.log("获取摄像头失败！", e);
+    });
+    //登入按钮要执行的方法
+    btn.onclick = function () {
+        scan();
+        //点击按钮时获取面部信息
+        //alert(context);
+        context.drawImage(video, 0, 0, 534, 400);
+        var imgSrc = document.getElementById("canvas").toDataURL("image/png");
+        //alert(imgSrc);
+        var faceBase = imgSrc.split(",")[1];
+        //ajax异步请求
+        $.ajax({
+            url: "/administrator/faceRegister",//请求的地址，面部信息发送的地方
+            type: "post",//请求的方式
+            data: {"faceInfo": faceBase},//发送的对象
+            success: function (result) {//返回的结果
+                if (result == "success") {
+                    var index = parent.layer.getFrameIndex(window.name);
+                    parent.layer.close(index);
+                    alert("人脸信息上传成功！");
+                    window.parent.close();
+                    // window.setTimeout("window.parent.close();", 1000);
+                } else if (result == "false") {
+                    alert("非法上传！！！");
+                } else {
+                    alert("上传失败！！");
+                }
+            },error: function (result) {
+                alert("出错！！")
+            }
+        });
+    }
+
+    function scan() {
+        var box = $(".media")
+        $("#scan").css({"bottom": box.height()}).animate({bottom: 0}, 2000, function () {
+            $("#scan").css({"bottom": box.height()});
+        })
+    }
+
+    window.setInterval(scan, 2000);//给scan方法添加定时器，2秒运行一次
+</script>
+</body>
+</html>

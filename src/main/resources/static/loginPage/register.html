@@ -1,0 +1,117 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="./css/bootstrap.min.css" type="text/css" rel="stylesheet">
+    <link href="./css/css.css" rel="stylesheet" type="text/css">
+    <script src="./js/jquery-1.11.0.min.js" type="text/javascript"></script>
+    <script src="./js/jquery.step.js"></script>
+    <script src="./js/bootstrap.min.js" type="text/javascript"></script>
+    <script src="./js/jquery.js" type="text/javascript"></script>
+    <title>注册</title>
+</head>
+
+<body class="logobg_style">
+<div id="large-header" class="large-header login-page">
+    <canvas id="demo-canvas" width="1590" height="711"></canvas>
+    <div class="Retrieve_style">
+        <div class="Retrieve-content step-body" id="myStep">
+            <h1 class="title_name">用户注册</h1>
+            <div class="step-header">
+                <ul>
+                    <li><p>输入电话</p></li>
+                    <li><p>确认密码</p></li>
+                    <li><p>成功</p></li>
+                </ul>
+            </div>
+            <div class="step-content">
+                <!-- 第一步 -->
+                <div class="step-list login_padding">
+                    <form role="form" id="form_login" class="">
+                        <div class="form-group clearfix">
+                            <div class="input-group">
+                                <div class="input-group-addon"><i class="icon_phone"></i></div>
+                                <input type="text" class="form-control text_phone" name="phone" id="phone"
+                                       placeholder="你的手机号" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="form-group clearfix">
+                            <div class="input-group col-lg-6 col-md-6 col-xs-6">
+                                <div class="input-group-addon">
+                                    <i class="icon_yanzhen"></i>
+                                </div>
+                                <input type="text" class="form-control" name="Verification" id="Verification"
+                                       placeholder="验证码" autocomplete="off">
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-xs-4 fl">
+                                <img style="border: 1px solid #ccc;height: 44px;" src="" class="captcha"
+                                     id="changeCaptcha"/>
+                            </div>
+                        </div>
+                        <div class="tishi"></div>
+                    </form>
+                    <div class="form-group">
+                        <button class="btn btn-danger btn-block btn-login" id="applyBtn">下一步</button>
+                    </div>
+                </div>
+                <!-- 第二步：设置密码 -->
+                <div class="step-list">
+                    <form method="post" role="form" id="" class="login_padding">
+                        <div class="form-group clearfix">
+                            <div class="input-group">
+                                <div class="input-group-addon">
+                                    <i class="icon_password"></i>
+                                </div>
+                                <input type="password" class="form-control" name="password" id="password"
+                                       placeholder="设置密码" autocomplete="off">
+                            </div>
+
+                        </div>
+                        <div class="form-group clearfix">
+                            <div class="input-group">
+                                <div class="input-group-addon">
+                                    <i class="icon_password"></i>
+                                </div>
+                                <input type="password" class="form-control" name="confirmpwd" id="confirmpwd"
+                                       placeholder="再次密码" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="tishis"></div>
+                        <div class="form-group">
+                            <a href="javascript:void(0);" type="submit" class="btn btn-danger btn-block btn-login"
+                               id="submitBtn">下一步</a>
+                        </div>
+                    </form>
+                </div>
+                <!-- 第三步：成功！ -->
+                <div class="step-list">
+                    <div class="ok_style center">
+                        <h2><img src="images/ok.png"></h2>
+                        <h5 class="color2 mtb20">注册成功<!--<b id="sec">5</b>秒后跳转到首页--></h5>
+                        <a href="/" class="btn btn-danger">首页</a>
+                        <a href="" class="btn btn-primary">从新注册</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="./js/TweenLite/TweenLite.min.js"></script>
+<script src="./js/TweenLite/EasePack.min.js"></script>
+<script src="./js/TweenLite/rAF.js"></script>
+<script src="./js/TweenLite/demo-1.js"></script>
+</body>
+</html>
+<script type="text/javascript">
+    $(function () {
+        $(".captcha").attr('src', "/common/captcha?ver=" + new Date().getTime());
+        $(".captcha").click(function () {
+            $(".captcha").each(function () {
+                var date = new Date();
+                $(this).attr("src", "/common/captcha?ver=" + date.getTime());
+            });
+        });
+    });
+</script>

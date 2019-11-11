@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>个人信息页</title>
+    <meta name="renderer" content="webkit"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon"/>
+    <link rel="stylesheet" th:href="@{/css/font.css}"/>
+    <link rel="stylesheet" th:href="@{/css/xadmin.css}"/>
+</head>
+<body onload="startClock()" onunload="stopClock()">
+<div class="x-body layui-anim layui-anim-up">
+    <blockquote class="layui-elem-quote">
+        欢迎用户：<span class="x-red" th:text="${session.user.uname}">怒斥的安东尼</span>！
+        <div style="display: inline;" id="show"></div>
+    </blockquote>
+    <!--<fieldset class="layui-elem-field">
+        <legend>数据统计</legend>
+        <div class="layui-field-box">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-body">
+                        <div class="layui-carousel x-admin-carousel x-admin-backlog" lay-anim="" lay-indicator="inside"
+                             lay-arrow="none" style="width: 100%; height: 90px;">
+                            <div carousel-item="">
+                                <ul class="layui-row layui-col-space10 layui-this">
+                                    <li class="layui-col-xs2">
+                                        <a href="javascript:;" class="x-admin-backlog-body">
+                                            <h3>阅读书籍数</h3>
+                                            <p><cite>2</cite></p>
+                                        </a>
+                                    </li>
+                                    <li class="layui-col-xs2">
+                                        <a href="javascript:;" class="x-admin-backlog-body">
+                                            <h3>点赞书籍数</h3>
+                                            <p><cite>2</cite></p>
+                                        </a>
+                                    </li>
+                                    <li class="layui-col-xs2">
+                                        <a href="javascript:;" class="x-admin-backlog-body">
+                                            <h3>评论次数</h3>
+                                            <p><cite>2</cite></p>
+                                        </a>
+                                    </li>
+                                    <li class="layui-col-xs2">
+                                        <a href="javascript:;" class="x-admin-backlog-body">
+                                            <h3>注册天数</h3>
+                                            <p><cite>5</cite></p>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>-->
+
+    <fieldset class="layui-elem-field">
+        <legend>用户信息</legend>
+        <div class="layui-field-box">
+            <table class="layui-table">
+                <tbody>
+                <tr>
+                    <th>用户名</th>
+                    <td th:text="${session.user.uname}">怒斥的安东尼</td>
+                </tr>
+                <tr>
+                    <th>手机号</th>
+                    <td th:text="${session.user.phone}">18870492559</td>
+                </tr>
+                <tr>
+                    <th>生日</th>
+                    <td th:text="${session.user.birth == null ? '未填写':#dates.format(session.user.birth.getTime(), 'MM-dd')}">未填写</td>
+                </tr>
+                <tr>
+                    <th>年龄</th>
+                    <td th:text="${session.user.birth == null ? '未填写':new java.util.Date().getYear() - session.user.birth.getYear()}">未填写</td>
+                </tr>
+                <tr>
+                    <th>性别</th>
+                    <td th:text="${session.user.sex == null || session.user.sex == '' ? '未填写':session.user.sex}">未填写</td>
+                </tr>
+                <tr>
+                    <th>用户类型</th>
+                    <td th:text="${session.user.userType==1? '管理员':'普通用户'}">管理员</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </fieldset>
+
+    <blockquote class="layui-elem-quote layui-quote-nm">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;阅读是运用语言文字来获取信息，认识世界，发展思维，并获得审美体验的活动。它是从视觉材料中获取信息的过程。视觉材料主要是文字和图片，也包括符号、公式、图表等。
+        阅读是一种主动的过程，是由阅读者根据不同的目的加以调节控制的,陶冶人们的情操，提升自我修养。阅读是一种理解，领悟，吸收，鉴赏，评价和探究文章的思维过程。阅读可以改变思想，从而可能改变命运。
+    </blockquote>
+</div>
+<script type="text/javascript">
+    var timer = null;
+
+    //停止计时
+    function stopClock() {
+        clearTimeout(timer);
+    }
+
+    //开始计时
+    function startClock() {
+        var time = new Date();
+        var showTime = "当前时间:" + time.getFullYear() + "-" + (time.getMonth() + 1) + "-" + time.getDate() + " " + time.getHours() + ":" + time.getMinutes() + ":" + time.getSeconds();
+        //显示时间
+        show.innerHTML = showTime;//在id为show的块区域显示
+        timer = setTimeout("startClock()", 1000);//延时器
+    }
+</script>
+</body>
+<script th:src="@{/js/jquery.min.js}"></script>
+<script th:src="@{/js/fuqiang.js}" charset="utf-8"></script>
+</html>

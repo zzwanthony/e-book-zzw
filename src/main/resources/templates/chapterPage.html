@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>目录页面</title>
+    <link th:href="@{/css/style.css}" type="text/css" rel="stylesheet"/>
+    <script type="text/javascript" th:src="@{/js/jquery.js}"></script>
+    <script th:src="@{/js/msc_common.js}" type="text/javascript" language="javascript"></script>
+</head>
+
+<body>
+<div class="head">
+    <div class="padding">
+        <div class="header">
+            <ul class="menu">
+                <div class="logo">电子书城</div>
+                <li class="on"><a th:href="@{/}" title="首页">首页</a></li>
+
+                <li><a th:href="@{'/ebook/sortBook/小说'}"><span>小说</span></a></li>
+                <li><a th:href="@{'/ebook/sortBook/计算机'}"><span>计算机</span></a></li>
+                <li><a th:href="@{'/ebook/sortBook/名著'}"><span>名著</span></a></li>
+                <li><a th:href="@{'/ebook/sortBook/儿童'}"><span>儿童</span></a></li>
+                <li><a th:href="@{'/ebook/sortBook/生活休闲'}"><span>生活休闲</span></a></li>
+                <li><a th:href="@{'/ebook/sortBook/自然科学'}"><span>自然科学</span></a></li>
+                <li><a th:href="@{'/ebook/sortBook/哲学'}"><span>哲学</span></a></li>
+                <li><a th:href="@{'/ebook/sortBook/游戏'}"><span>游戏</span></a></li>
+                <li><a th:href="@{'/ebook/sortBook/其他'}"><span>其他</span></a></li>
+
+            </ul>
+            <div class="search" style="height: 36px">
+                <form name="formsearch" method="post" th:action="@{/ebook/findBookByName}">
+                    <input type="hidden" name="key" value="0"/>
+                    <input name="keyword" type="text" class="search-keyword" id="search-keyword" value="输入搜索..."
+                           onfocus="if(this.value=='输入搜索...'){this.value='';}"
+                           onblur="if(this.value==''){this.value='输入搜索...';}"/>
+                    <button type="submit" class="search-submit">搜索</button>
+                </form>
+            </div>
+            <ul class="nav">
+                <li th:if="${session.user == null}">
+                    <span style="cursor: hand">
+                        <a style="font-size:15px;color:white"
+                           th:href="@{/loginPage/login.html}">登入&nbsp;&nbsp;&nbsp;</a>
+                    </span>
+                </li>
+                <li th:if="${session.user != null}">
+                    <span style="cursor: hand">
+                        <a style="font-size:15px;color:white" th:href="@{/readerUser/personal.do}">
+                            个人中心
+                        </a>
+                    </span>
+                </li>
+                <li th:if="${session.user != null}">
+                    <span style="cursor: hand">
+                        <a style="font-size:15px;color:white" th:href="@{/outLogin.do}">
+                            退出登录
+                        </a>
+                    </span>
+                </li>
+                <!--<li>-->
+                <!--<span style="CURSOR: hand"-->
+                <!--onClick="javascript:window.external.AddFavorite('http://www.zzwanthony.xyz/dianzishuyuedu','电子书阅读网')"-->
+                <!--title="http://www.zzwanthony.xyz/dianzishuyuedu"><font-->
+                <!--style="color:#ffffff;">收藏本站</font></span>-->
+                <!--</li>-->
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="padding">
+    <div class="lbox">
+
+    </div>
+    <div class="position"><a href='/'>主页</a> ><!-- <a href='#'>古典小说</a> >--> <a href='#'>红楼梦</a>
+        >
+    </div>
+
+    <div class="section">
+        <div class="book_info">
+            <div class="pic"><img alt=""
+                                  th:src="${(ebook.coverName == null || ebook.coverName == '') ? '/book/images/default.jpg' : '/book/images/'+ebook.coverName}"
+                                  style="width: 120px; height: 150px;"/></div>
+            <h1 th:text="${ebook.ename}">红楼梦</h1>
+            <div class="infos">
+                <span><h3 th:text="${'作者：'+ebook.author}">作者：曹雪芹</h3></span>
+                <span>更新时间：<i th:text="${ebook.uploadData}"></i></span></div>
+            <div class="upd">简介：</div>
+            <p th:text="${ebook.introduction}">暂无</p>
+        </div>
+    </div>
+
+
+    <div class="section">
+        <div class="book_list">
+            <h2 th:text="${ebook.ename+'章节'}">章节</h2>
+            <h2></h2>
+            <ul>
+                <li th:each="titl,titleStat:${ebook.titles}">
+                    <a th:href="@{'/readBookPage/'+${ebook.txtSn}+'/'+${titleStat.index}}" th:title="${titl}"
+                       th:text="${titl}">《红楼梦》简介</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+﻿
+<div class="foot">
+    <p>Copyright ©2019 zhongzhiwei</p>
+    <p>江西科技师范软件动漫学院 16计算机一班 毕业设计 钟志卫</p>
+</div>
+</body>
+<script th:src="@{/js/fuqiang.js}" charset="utf-8"></script>
+</html>
